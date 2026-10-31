@@ -1,0 +1,969 @@
+
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NameForge Pro</title>
+<style>
+:root {
+  --bg:#0b0d14;
+  --panel:#131722;
+  --panel2:#191f2d;
+  --border:#292f40;
+  --text:#f4f6ff;
+  --muted:#929bb0;
+  --accent:#8b75ff;
+  --accent2:#5ee7d0;
+}
+* { box-sizing:border-box; }
+body {
+  margin:0;
+  min-height:100vh;
+  background:radial-gradient(ellipse at top,#1b1b39 0%,var(--bg) 55%);
+  color:var(--text);
+  font-family:Inter,Segoe UI,Arial,sans-serif;
+}
+button,select { font:inherit; }
+button { cursor:pointer; }
+header {
+  height:76px;
+  border-bottom:1px solid var(--border);
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding:0 7%;
+  background:#0b0d14cc;
+}
+.logo { font-size:23px;font-weight:850;letter-spacing:-1px; }
+.logo span { color:var(--accent); }
+.tag {
+  color:var(--accent2);font-size:11px;font-weight:800;
+  border:1px solid #315b5a;padding:6px 9px;border-radius:7px;
+}
+main { max-width:1120px;margin:auto;padding:45px 22px 70px; }
+.hero { text-align:center;margin-bottom:35px; }
+.eyebrow {
+  color:var(--accent2);font-size:12px;letter-spacing:2px;
+  font-weight:800;text-transform:uppercase;
+}
+h1 { font-size:clamp(36px,6vw,58px);margin:13px 0;letter-spacing:-2px; }
+h1 span {
+  background:linear-gradient(100deg,#a99aff,#6ce9e0);
+  color:transparent;background-clip:text;
+}
+.hero p { color:var(--muted);line-height:1.7;margin:0; }
+.layout {
+  display:grid;grid-template-columns:310px 1fr;gap:22px;align-items:start;
+}
+.panel {
+  background:var(--panel);border:1px solid var(--border);
+  border-radius:17px;padding:22px;
+}
+.panel h2 { font-size:16px;margin:0 0 20px; }
+.field { margin-bottom:20px; }
+.field label {
+  display:block;font-size:12px;font-weight:750;
+  color:#bbc3d5;margin-bottom:9px;
+}
+select {
+  width:100%;background:var(--panel2);color:var(--text);
+  border:1px solid var(--border);padding:13px;border-radius:10px;
+  outline:none;
+}
+select:focus { border-color:var(--accent); }
+.styles { display:grid;grid-template-columns:1fr 1fr;gap:8px; }
+.style-btn {
+  background:var(--panel2);border:1px solid var(--border);
+  color:#bdc5d6;padding:11px 8px;border-radius:9px;
+  font-size:13px;transition:.2s;
+}
+.style-btn.active {
+  color:white;background:#302857;border-color:var(--accent);
+}
+.primary {
+  width:100%;border:0;border-radius:10px;padding:14px;
+  color:white;font-weight:800;
+  background:linear-gradient(100deg,#7762ed,#6650d6);
+  box-shadow:0 6px 24px #6550d62b;transition:.2s;
+}
+.primary:hover { filter:brightness(1.12);transform:translateY(-1px); }
+#generate { margin-top:10px; }
+#generateCustom { margin-bottom:0; }
+#customWord { font:inherit; }
+.note { color:var(--muted);font-size:11px;line-height:1.6;margin-top:15px; }
+.results-head {
+  display:flex;justify-content:space-between;align-items:center;
+  gap:12px;margin-bottom:16px;
+}
+.results-head h2 { margin:0;font-size:18px; }
+.counter { color:var(--muted);font-size:12px; }
+.names { display:grid;gap:10px; }
+.name-card {
+  display:flex;align-items:center;gap:12px;
+  padding:14px;background:var(--panel);border:1px solid var(--border);
+  border-radius:12px;min-width:0;transition:.2s;
+}
+.name-card:hover { border-color:#5b507d; }
+.name-text { flex:1;min-width:0; }
+.nickname {
+  font-size:17px;font-weight:800;overflow-wrap:anywhere;
+  letter-spacing:.2px;
+}
+.name-meta { font-size:11px;color:var(--muted);margin-top:5px; }
+.actions { display:flex;gap:6px; }
+.icon-btn {
+  border:1px solid var(--border);background:var(--panel2);
+  color:#cbd1e1;border-radius:8px;padding:9px 10px;
+}
+.icon-btn:hover { border-color:var(--accent);color:white; }
+.icon-btn.fav { color:#ffd76b; }
+.empty {
+  color:var(--muted);text-align:center;padding:30px 10px;
+  border:1px dashed var(--border);border-radius:12px;
+}
+.section { margin-top:24px; }
+.section-head {
+  display:flex;align-items:center;justify-content:space-between;
+  gap:10px;margin-bottom:13px;
+}
+.section-head h2 { margin:0;font-size:15px; }
+.small-btn {
+  background:transparent;border:0;color:var(--muted);font-size:12px;
+}
+.small-btn:hover { color:white; }
+.saved-list { display:grid;gap:8px; }
+.saved-item {
+  display:flex;align-items:center;gap:10px;padding:11px 12px;
+  background:var(--panel2);border-radius:9px;min-width:0;
+}
+.saved-item .nickname { font-size:13px;flex:1; }
+.saved-item .icon-btn { padding:6px 8px; }
+.toast {
+  position:fixed;bottom:24px;left:50%;transform:translate(-50%,20px);
+  opacity:0;pointer-events:none;background:#20283a;border:1px solid #414b63;
+  padding:12px 18px;border-radius:10px;font-size:13px;
+  transition:.25s;z-index:10;
+}
+.toast.show { opacity:1;transform:translate(-50%,0); }
+footer {
+  text-align:center;color:var(--muted);font-size:11px;
+  margin-top:35px;line-height:1.8;
+}
+@media(max-width:760px) {
+  header { padding:0 20px; }
+  main { padding:32px 14px 50px; }
+  .layout { grid-template-columns:1fr; }
+  .panel { padding:18px; }
+  .results-head h2 { font-size:16px; }
+  .nickname { font-size:15px; }
+}
+
+/* ===== NAMEFORGE PRO : PREMIUM MOTION ===== */
+
+:root {
+  --accent: #9b87ff;
+  --accent2: #65f5df;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background:
+    radial-gradient(ellipse at 15% 5%, #292050 0%, transparent 38%),
+    radial-gradient(ellipse at 90% 25%, #102f3b 0%, transparent 34%),
+    #0b0d14;
+  background-size: 150% 150%;
+  animation: backgroundDrift 18s ease-in-out infinite alternate;
+}
+
+@keyframes backgroundDrift {
+  from { background-position: 0% 0%; }
+  to   { background-position: 100% 100%; }
+}
+
+header {
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  position: sticky;
+  top: 0;
+  z-index: 5;
+  transition: border-color .3s ease;
+}
+
+.logo {
+  transition: transform .3s ease, letter-spacing .3s ease;
+}
+
+.logo:hover {
+  transform: scale(1.04);
+  letter-spacing: .3px;
+}
+
+.tag {
+  box-shadow: 0 0 18px #5ee7d015;
+  animation: tagGlow 3s ease-in-out infinite alternate;
+}
+
+@keyframes tagGlow {
+  from { box-shadow: 0 0 8px #5ee7d010; }
+  to   { box-shadow: 0 0 20px #5ee7d035; }
+}
+
+.hero {
+  animation: heroEnter .75s cubic-bezier(.2,.8,.2,1) both;
+}
+
+@keyframes heroEnter {
+  from { opacity: 0; transform: translateY(18px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+h1 span {
+  background-size: 200% auto;
+  animation: gradientFlow 5s linear infinite;
+}
+
+@keyframes gradientFlow {
+  to { background-position: 200% center; }
+}
+
+.panel {
+  box-shadow: 0 12px 35px #00000016;
+  transition:
+    border-color .3s ease,
+    box-shadow .3s ease,
+    transform .3s ease;
+}
+
+.panel:hover {
+  border-color: #41445e;
+  box-shadow: 0 16px 42px #00000025;
+}
+
+.style-btn,
+select,
+.icon-btn,
+.primary {
+  transition:
+    background .22s ease,
+    border-color .22s ease,
+    color .22s ease,
+    transform .22s ease,
+    box-shadow .22s ease;
+}
+
+.style-btn:hover {
+  transform: translateY(-2px);
+  border-color: var(--accent);
+  color: white;
+}
+
+.style-btn.active {
+  box-shadow: 0 0 18px #8b75ff20;
+}
+
+.primary {
+  position: relative;
+  overflow: hidden;
+}
+
+.primary::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -120%;
+  width: 70%;
+  height: 100%;
+  background: linear-gradient(
+    100deg,
+    transparent,
+    #ffffff30,
+    transparent
+  );
+  transform: skewX(-20deg);
+  transition: left .65s ease;
+  pointer-events: none;
+}
+
+.primary:hover::after {
+  left: 150%;
+}
+
+.primary:active,
+.icon-btn:active,
+.style-btn:active {
+  transform: scale(.96);
+}
+
+.name-card {
+  animation: cardEnter .42s cubic-bezier(.2,.8,.2,1) both;
+  transform-origin: center;
+}
+
+.name-card:nth-child(2) { animation-delay: .04s; }
+.name-card:nth-child(3) { animation-delay: .08s; }
+.name-card:nth-child(4) { animation-delay: .12s; }
+.name-card:nth-child(5) { animation-delay: .16s; }
+
+@keyframes cardEnter {
+  from {
+    opacity: 0;
+    transform: translateY(12px) scale(.985);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.name-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 24px #00000025;
+  border-color: #6657a1;
+}
+
+.nickname {
+  transition: color .2s ease;
+}
+
+.name-card:hover .nickname {
+  color: #c7bcff;
+}
+
+.icon-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px #00000025;
+}
+
+.icon-btn.fav {
+  text-shadow: 0 0 12px #ffd76b55;
+}
+
+.saved-item {
+  animation: cardEnter .3s ease both;
+  transition: background .2s ease, transform .2s ease;
+}
+
+.saved-item:hover {
+  background: #222a3b;
+  transform: translateX(3px);
+}
+
+.toast {
+  backdrop-filter: blur(14px);
+  box-shadow: 0 10px 35px #00000045;
+}
+
+.toast.show {
+  animation: toastEnter .3s cubic-bezier(.2,.8,.2,1);
+}
+
+@keyframes toastEnter {
+  from { transform: translate(-50%, 12px) scale(.96); }
+  to   { transform: translate(-50%, 0) scale(1); }
+}
+
+select:focus,
+input:focus-visible,
+button:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: .01ms !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+    transition-duration: .01ms !important;
+  }
+}
+
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">Name<span>Forge</span></div>
+  <div class="tag">PRO · GRATUIT</div>
+</header>
+
+<main>
+  <section class="hero">
+    <div class="eyebrow">Ton identité gaming commence ici</div>
+    <h1>Forge ton prochain <span>pseudo.</span></h1>
+    <p>Des pseudos originaux pour ton prochain jeu.<br>
+    Choisis ton univers, génère, copie et joue.</p>
+  </section>
+
+  <div class="layout">
+    <aside class="panel">
+      <h2>⚙️ Personnalisation</h2>
+
+      <div class="field">
+        <label for="game">TON JEU</label>
+        <select id="game">
+          <option value="all">🎮 Tous les jeux</option>
+          <option value="fortnite">🎯 Fortnite</option>
+          <option value="minecraft">🧱 Minecraft</option>
+          <option value="roblox">🟩 Roblox</option>
+          <option value="valorant">🔫 Valorant</option>
+        </select>
+      </div>
+
+      <div class="field">
+        <label>STYLE DU PSEUDO</label>
+        <div class="styles">
+          <button class="style-btn active" data-style="tryhard">⚡ Tryhard</button>
+          <button class="style-btn" data-style="dark">🌑 Dark</button>
+          <button class="style-btn" data-style="fun">😂 Fun</button>
+          <button class="style-btn" data-style="space">🌌 Espace</button>
+        </div>
+      </div>
+<div class="field">
+  <label for="customWord">TON MOT PERSONNALISÉ</label>
+  <input
+    id="customWord"
+    type="text"
+    value="Shadow"
+    maxlength="20"
+    placeholder="Ex. Shadow, Dragon, Alex..."
+    style="width:100%;background:#191f2d;color:#f4f6ff;border:1px solid #292f40;padding:13px;border-radius:10px;outline:none;"
+  >
+  <p class="note">Crée des variantes à partir de ton propre mot.</p>
+</div>
+
+<div class="field">
+  <label for="nameLength">LONGUEUR MAXIMALE</label>
+  <select id="nameLength">
+    <option value="8">Court · 8 caractères</option>
+    <option value="12" selected>Moyen · 12 caractères</option>
+    <option value="16">Long · 16 caractères</option>
+  </select>
+</div>
+<div class="field" style="display:flex;gap:16px;flex-wrap:wrap;">
+  <label style="display:flex;align-items:center;gap:8px;color:#bbc3d5;font-size:12px;">
+    <input id="includeNumbers" type="checkbox" checked> Ajouter des chiffres
+  </label>
+  <label style="display:flex;align-items:center;gap:8px;color:#bbc3d5;font-size:12px;">
+    <input id="includeSymbols" type="checkbox"> Ajouter des symboles
+  </label>
+</div>
+
+<button class="primary" id="generateCustom" style="margin-top:10px;">
+  ✨ Générer mes pseudos personnalisés
+</button>
+      <button class="primary" id="generate">✦ Générer 5 pseudos</button>
+      <p class="note">Tes favoris et ton historique restent enregistrés sur cet appareil. Aucun compte requis.</p>
+    </aside>
+
+    <section>
+      <div class="panel">
+        <div class="results-head">
+          <h2>✨ Tes pseudos</h2>
+          <span class="counter" id="counter">5 résultats</span>
+        </div>
+
+<div class="stats-panel" style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin:20px 0;">
+  <div class="stat-card" style="padding:16px;border:1px solid #34344f;border-radius:12px;background:#171725;text-align:center;">
+    <div style="font-size:25px;font-weight:bold;color:#a78bfa;" id="stat-generated">0</div>
+    <div style="font-size:12px;color:#b8b8cc;">Générés</div>
+  </div>
+  <div class="stat-card" style="padding:16px;border:1px solid #34344f;border-radius:12px;background:#171725;text-align:center;">
+    <div style="font-size:25px;font-weight:bold;color:#a78bfa;" id="stat-favorites">0</div>
+    <div style="font-size:12px;color:#b8b8cc;">Favoris</div>
+  </div>
+  <div class="stat-card" style="padding:16px;border:1px solid #34344f;border-radius:12px;background:#171725;text-align:center;">
+    <div style="font-size:25px;font-weight:bold;color:#a78bfa;" id="stat-history">0</div>
+    <div style="font-size:12px;color:#b8b8cc;">Historique</div>
+  </div>
+</div>
+
+        <div class="names" id="results"></div>
+
+<div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:14px;">
+  <button class="icon-btn" onclick="exportNames(currentNames, 'NameForge-pseudos.txt')">
+    📥 Exporter les pseudos
+  </button>
+  <button class="icon-btn" onclick="exportNames(favorites, 'NameForge-favoris.txt')">
+    ⭐ Exporter les favoris
+  </button>
+</div>
+
+      </div>
+
+      <div class="panel section">
+        <div class="section-head">
+          <h2>⭐ Mes favoris</h2>
+          <button class="small-btn" id="clearFav">Tout effacer</button>
+        </div>
+        <div class="saved-list" id="favorites"></div>
+      </div>
+
+      <div class="panel section">
+        <div class="section-head">
+          <h2>🕘 Historique récent</h2>
+          <button class="small-btn" id="clearHistory">Effacer</button>
+        </div>
+        <div class="saved-list" id="history"></div>
+      </div>
+    </section>
+  </div>
+
+  <footer>
+    NAMEFORGE PRO · Fabrique ton identité gaming<br>
+    Génération locale · Gratuit · Tes données restent sur ton appareil
+  </footer>
+</main>
+
+<div class="toast" id="toast">Copié !</div>
+
+<script>
+const pools = {
+  tryhard: {
+    a:["Ghost","Shadow","Clutch","Venom","Frost","Rogue","Blaze","Viper","Swift","Phantom","Storm","Reaper","Zero","Drift","Toxic"],
+    b:["X","Z","FN","ツ","V2","OnTop","Peak","Rush","Aim","GG","FPS","Ace","YT","OP",".exe"]
+  },
+  dark: {
+    a:["Void","Noctis","Reaper","Raven","Dusk","Abyss","Hollow","Grim","Eclipse","Wraith","Obsidian","Phantom","Onyx","Sinister","Specter"],
+    b:["Night","Soul","Zero","Shade","X","404","Fallen","Dark",".exe","Ghost","13","Mist","Lost","Vex","Null"]
+  },
+  fun: {
+    a:["Potato","Baguette","Pickle","Boubou","Noodle","Panda","Kiwi","Dino","Mochi","Biscuit","Poulpe","Patate","Chips","Cookie","Pingouin"],
+    b:["Master","Turbo","Gaming","Cosmic","Royal","XL","Du93","LOL","Supreme","Boum","3000","Pro","King","GG","DuBled"]
+  },
+  space: {
+    a:["Nova","Cosmo","Astro","Orion","Lunar","Nebula","Comet","Stellar","Galaxy","Pulsar","Quasar","Zenith","Solar","Meteor","Astra"],
+    b:["X","Orbit","Prime","Flux","Vortex","Zero","Wave","Core","Drift","Void","One","Zen","Echo","Rise","Nova"]
+  }
+};
+
+const gameWords = {
+  all: {
+    a:[], b:[]
+  },
+  fortnite: {
+    a:["Clutch","Build","Storm","Box","Edit","Crank","Drop","Victory","Pump","Zone"],
+    b:["FN","OnTop","Piece","God","Rush","Diff","WKey","Elite","200","King"]
+  },
+  minecraft: {
+    a:["Creeper","Ender","Diamond","Redstone","Pixel","Craft","Block","Nether","Axolotl","Miner"],
+    b:["Craft","Pickaxe","Cube","Steve","Ore","Builder","Block","GG","Master","Fox"]
+  },
+  roblox: {
+    a:["Pixel","Blox","Noob","Obby","Robo","Mega","Lucky","Bacon","Tycoon","Avatar"],
+    b:["Blox","Plays","Builder","Pro","Legend","RBX","King","Star","XD","Studio"]
+  },
+  valorant: {
+    a:["Clutch","Phantom","Radiant","Spike","Reyna","Vandal","Shadow","Ace","Flick","Strafe"],
+    b:["Diff","Tap","OneTap","Aim","Entry","Frag","Peak","VLR","Ghost","IGL"]
+  }
+};
+
+let currentStyle = "tryhard";
+let favorites = load("nf_favorites", []);
+let history = load("nf_history", []);
+let currentNames = [];
+
+function load(key, fallback) {
+  try {
+    const value = JSON.parse(localStorage.getItem(key));
+    return Array.isArray(value) ? value : fallback;
+  } catch {
+    return fallback;
+  }
+}
+
+function save(key, value) {
+  try {
+    localStorage.setItem(key, JSON.stringify(value));
+  } catch {}
+}
+
+function pick(arr) {
+  return arr[Math.floor(Math.random() * arr.length)];
+}
+
+function makeName() {
+  const style = pools[currentStyle];
+  const game = gameWords[document.getElementById("game").value];
+
+  let firstPool = style.a;
+  let secondPool = style.b;
+
+  if (game.a.length) {
+    firstPool = [...game.a, ...style.a.slice(0, 5)];
+    secondPool = [...game.b, ...style.b.slice(0, 5)];
+  }
+
+  const formats = [
+    () => pick(firstPool) + pick(secondPool),
+    () => pick(firstPool) + "_" + pick(secondPool),
+    () => pick(firstPool) + pick(["", "X", "Z", "ツ", ""]),
+    () => pick(firstPool) + Math.floor(Math.random() * 99 + 1),
+    () => pick(secondPool) + pick(firstPool)
+  ];
+
+  return pick(formats)();
+}
+
+function applyNameOptions(name) {
+  const maxLength = Number(document.getElementById("nameLength").value) || 12;
+  const includeNumbers = document.getElementById("includeNumbers").checked;
+  const includeSymbols = document.getElementById("includeSymbols").checked;
+
+  // Retire d'abord les types de caractères désactivés.
+  if (!includeNumbers) name = name.replace(/[0-9]/g, "");
+  if (!includeSymbols) name = name.replace(/[^a-zA-ZÀ-ÿ]/g, "");
+
+  // Ajoute un chiffre ou un symbole si l'option est activée et qu'il en manque.
+  if (includeNumbers && !/[0-9]/.test(name)) {
+    name += String(Math.floor(Math.random() * 9) + 1);
+  }
+  if (includeSymbols && !/[_ツ.]/.test(name)) {
+    name += pick(["_", "ツ", "."]);
+  }
+
+  return name.slice(0, maxLength) || "Player";
+}
+
+function generate(countStats = true) {
+  currentNames = [];
+  let attempts = 0;
+
+  while (currentNames.length < 5 && attempts < 100) {
+    const name = applyNameOptions(makeName());
+    if (!currentNames.includes(name)) currentNames.push(name);
+    attempts++;
+  }
+
+  currentNames.forEach(name => {
+    history = [name, ...history.filter(n => n !== name)].slice(0, 20);
+  });
+
+  save("nf_history", history);
+  if (countStats) recordGenerated(currentNames.length);
+  renderResults();
+  renderHistory();
+  updateStats();
+}
+function generateCustom() {
+  const input = document.getElementById("customWord");
+  const word = input.value.trim().replace(/\s+/g, "");
+
+  if (!word) {
+    showToast("Entre d'abord un mot personnalisé !");
+    input.focus();
+    return;
+  }
+
+  const game = gameWords[document.getElementById("game").value];
+  const style = pools[currentStyle];
+
+  // Utilise les mots du jeu choisi, ou le style sélectionné.
+  const suffixes = game.b.length
+    ? [...game.b, ...style.b]
+    : style.b;
+
+  const prefixes = game.a.length
+    ? [...game.a, ...style.a]
+    : style.a;
+
+  const variants = [
+    () => word + pick(suffixes),
+    () => word + "_" + pick(suffixes),
+    () => word + Math.floor(Math.random() * 99 + 1),
+    () => "X" + word,
+    () => word + pick(["X", "ツ", "Z", "YT", ""]),
+    () => pick(prefixes) + word,
+    () => word + "FN",
+    () => word + "OnTop"
+  ];
+
+  currentNames = [];
+  let attempts = 0;
+
+  while (currentNames.length < 5 && attempts < 100) {
+    const name = applyNameOptions(pick(variants)());
+
+    if (!currentNames.includes(name)) {
+      currentNames.push(name);
+    }
+
+    attempts++;
+  }
+
+  history = [
+    ...currentNames,
+    ...history.filter(n => !currentNames.includes(n))
+  ].slice(0, 20);
+
+  save("nf_history", history);
+  recordGenerated(currentNames.length);
+  renderResults();
+  renderHistory();
+  updateStats();
+}
+function renderResults() {
+  const container = document.getElementById("results");
+  container.innerHTML = "";
+  document.getElementById("counter").textContent =
+    currentNames.length + " résultats";
+
+  if (!currentNames.length) {
+    container.innerHTML = '<div class="empty">Clique sur Générer pour commencer.</div>';
+    return;
+  }
+
+  currentNames.forEach(name => {
+    const isFav = favorites.includes(name);
+    const card = document.createElement("div");
+    card.className = "name-card";
+
+    const text = document.createElement("div");
+    text.className = "name-text";
+
+    const nick = document.createElement("div");
+    nick.className = "nickname";
+    nick.textContent = name;
+
+    const meta = document.createElement("div");
+    meta.className = "name-meta";
+    meta.textContent = gameLabel() + " · " + styleLabel();
+
+    text.append(nick, meta);
+
+    const actions = document.createElement("div");
+    actions.className = "actions";
+
+    const fav = document.createElement("button");
+    fav.className = "icon-btn" + (isFav ? " fav" : "");
+    fav.textContent = isFav ? "★" : "☆";
+    fav.title = "Ajouter aux favoris";
+    fav.setAttribute("aria-label", "Ajouter aux favoris");
+    fav.onclick = () => toggleFavorite(name);
+
+    const copy = document.createElement("button");
+    copy.className = "icon-btn";
+    copy.textContent = "Copier";
+    copy.onclick = () => copyName(name);
+
+    actions.append(fav, copy);
+    card.append(text, actions);
+    container.append(card);
+  });
+}
+
+function renderSaved(containerId, items, type) {
+  const container = document.getElementById(containerId);
+  container.innerHTML = "";
+
+  if (!items.length) {
+    const empty = document.createElement("div");
+    empty.className = "empty";
+    empty.textContent = type === "fav"
+      ? "Tes favoris apparaîtront ici."
+      : "Tes pseudos récents apparaîtront ici.";
+    container.append(empty);
+    return;
+  }
+
+  items.forEach(name => {
+    const row = document.createElement("div");
+    row.className = "saved-item";
+
+    const nick = document.createElement("div");
+    nick.className = "nickname";
+    nick.textContent = name;
+
+    const copy = document.createElement("button");
+    copy.className = "icon-btn";
+    copy.textContent = "Copier";
+    copy.onclick = () => copyName(name);
+
+    row.append(nick, copy);
+
+    if (type === "fav") {
+      const remove = document.createElement("button");
+      remove.className = "icon-btn fav";
+      remove.textContent = "★";
+      remove.title = "Retirer des favoris";
+      remove.onclick = () => toggleFavorite(name);
+      row.append(remove);
+    }
+
+    container.append(row);
+  });
+}
+
+function renderFavorites() {
+  renderSaved("favorites", favorites, "fav");
+}
+
+function renderHistory() {
+  renderSaved("history", history, "history");
+}
+
+function toggleFavorite(name) {
+  favorites = favorites.includes(name)
+    ? favorites.filter(n => n !== name)
+    : [name, ...favorites];
+
+  save("nf_favorites", favorites);
+  renderResults();
+  renderFavorites();
+  updateStats();
+}
+
+function exportNames(names, filename) {
+  if (!names.length) {
+    showToast("Rien à exporter pour le moment !");
+    return;
+  }
+
+  const content = names.join("\r\n");
+  const blob = new Blob(["\uFEFF" + content], {
+    type: "text/plain;charset=utf-8"
+  });
+
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement("a");
+
+  link.href = url;
+  link.download = filename;
+  document.body.appendChild(link);
+  link.click();
+  link.remove();
+
+  setTimeout(() => URL.revokeObjectURL(url), 1000);
+  showToast("✓ Fichier téléchargé !");
+}
+
+function updateStats() {
+  const generatedEl = document.getElementById("stat-generated");
+  const favoritesEl = document.getElementById("stat-favorites");
+  const historyEl = document.getElementById("stat-history");
+
+  if (generatedEl) {
+    generatedEl.textContent = localStorage.getItem("nf_total_generated") || "0";
+  }
+  if (favoritesEl) favoritesEl.textContent = favorites.length;
+  if (historyEl) historyEl.textContent = history.length;
+}
+
+function recordGenerated(count) {
+  const total = Number(localStorage.getItem("nf_total_generated") || 0) + count;
+  localStorage.setItem("nf_total_generated", String(total));
+  updateStats();
+}
+
+function gameLabel() {
+  const select = document.getElementById("game");
+  return select.options[select.selectedIndex].text;
+}
+
+function styleLabel() {
+  return {
+    tryhard:"Tryhard", dark:"Dark", fun:"Fun", space:"Espace"
+  }[currentStyle];
+}
+
+
+async function copyName(name) {
+  let copied = false;
+
+  try {
+    if (navigator.clipboard && window.isSecureContext) {
+      await navigator.clipboard.writeText(name);
+      copied = true;
+    }
+  } catch (error) {
+    copied = false;
+  }
+
+  // Méthode de secours pour les pages HTML ouvertes localement.
+  if (!copied) {
+    try {
+      const input = document.createElement("textarea");
+      input.value = name;
+      input.setAttribute("readonly", "");
+      input.style.position = "fixed";
+      input.style.left = "-9999px";
+      document.body.appendChild(input);
+      input.select();
+      copied = document.execCommand("copy");
+      input.remove();
+    } catch (error) {
+      copied = false;
+    }
+  }
+
+  showToast(
+    copied
+      ? "✓ " + name + " copié !"
+      : "Copie impossible. Sélectionne le pseudo manuellement."
+  );
+}
+
+
+let toastTimer;
+
+function showToast(message) {
+  const toast = document.getElementById("toast");
+  toast.textContent = message;
+  toast.classList.add("show");
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => toast.classList.remove("show"), 2200);
+}
+
+document.querySelectorAll(".style-btn").forEach(button => {
+  button.addEventListener("click", () => {
+    document.querySelectorAll(".style-btn").forEach(b =>
+      b.classList.remove("active")
+    );
+    button.classList.add("active");
+    currentStyle = button.dataset.style;
+  });
+});
+
+document.getElementById("generate").addEventListener("click", generate);
+document.getElementById("generateCustom")
+  .addEventListener("click", generateCustom);
+
+document.getElementById("game").addEventListener("change", () => {
+  if (currentNames.length) generate();
+});
+
+document.getElementById("clearFav").addEventListener("click", () => {
+  if (!favorites.length) return showToast("Aucun favori à effacer.");
+  if (confirm("Effacer tous tes favoris ?")) {
+    favorites = [];
+    save("nf_favorites", favorites);
+    renderFavorites();
+    renderResults();
+    updateStats();
+  }
+});
+
+document.getElementById("clearHistory").addEventListener("click", () => {
+  if (!history.length) return showToast("Historique déjà vide.");
+  if (confirm("Effacer ton historique ?")) {
+    history = [];
+    save("nf_history", history);
+    renderHistory();
+    updateStats();
+  }
+});
+
+renderFavorites();
+renderHistory();
+generate(false);
+updateStats();
+</script>
+</body>
+</html>
