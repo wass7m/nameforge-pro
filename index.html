@@ -4,7 +4,9 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>NameForge Pro</title>
+<title>NameForge Pro — Générateur de pseudos gaming gratuit</title>
+<meta name="description" content="Forge gratuitement ton pseudo gaming pour Fortnite, Minecraft, Roblox, Valorant et plus. Génère, personnalise, copie et sauvegarde tes pseudos.">
+<meta name="theme-color" content="#0b0d14">
 <style>
 :root {
   --bg:#0b0d14;
@@ -399,6 +401,7 @@ button:focus-visible {
     <h1>Forge ton prochain <span>pseudo.</span></h1>
     <p>Des pseudos originaux pour ton prochain jeu.<br>
     Choisis ton univers, génère, copie et joue.</p>
+  <button class="icon-btn" id="shareSite" style="margin-top:18px;">↗ Partager NameForge Pro</button>
   </section>
 
   <div class="layout">
@@ -515,9 +518,21 @@ button:focus-visible {
     </section>
   </div>
 
+  <section class="panel section" aria-labelledby="about-title">
+    <h2 id="about-title">🚀 À propos de NameForge Pro</h2>
+    <p style="color:var(--muted);line-height:1.8;margin:0;">
+      NameForge Pro est un générateur gratuit de pseudos gaming. Choisis ton jeu et ton style,
+      crée des idées originales, puis copie ou garde tes préférées. Aucun compte n’est nécessaire.
+    </p>
+    <p style="color:var(--muted);font-size:12px;line-height:1.7;margin:12px 0 0;">
+      Confidentialité : tes favoris et ton historique sont enregistrés localement dans ton navigateur.
+      NameForge Pro ne les envoie pas à un serveur.
+    </p>
+  </section>
+
   <footer>
     NAMEFORGE PRO · Fabrique ton identité gaming<br>
-    Génération locale · Gratuit · Tes données restent sur ton appareil
+    Gratuit · Génération locale · Créé pour la communauté gaming
   </footer>
 </main>
 
@@ -929,6 +944,26 @@ document.querySelectorAll(".style-btn").forEach(button => {
     button.classList.add("active");
     currentStyle = button.dataset.style;
   });
+});
+
+document.getElementById("shareSite").addEventListener("click", async () => {
+  const shareData = {
+    title: "NameForge Pro — Générateur de pseudos gaming",
+    text: "Forge ton prochain pseudo gaming gratuitement avec NameForge Pro !",
+    url: window.location.href
+  };
+  try {
+    if (navigator.share) {
+      await navigator.share(shareData);
+    } else if (navigator.clipboard && window.isSecureContext) {
+      await navigator.clipboard.writeText(window.location.href);
+      showToast("✓ Lien du site copié !");
+    } else {
+      showToast("Copie le lien dans la barre d’adresse pour le partager.");
+    }
+  } catch (error) {
+    if (error.name !== "AbortError") showToast("Tu peux partager le lien depuis la barre d’adresse.");
+  }
 });
 
 document.getElementById("generate").addEventListener("click", generate);
